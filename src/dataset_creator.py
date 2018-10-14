@@ -148,5 +148,5 @@ if __name__ == '__main__':
         'glass': 4
     }
     
-    i, l = image_label_generator()
-    create_dataset(i, l)
+    _images, _labels = image_label_generator()
+    create_dataset(_images, _labels)
