@@ -1,0 +1,6 @@
+matplotlib==2.1.0
+numpy==1.14.2
+opencv_python==3.4.0.12
+tensorflow_gpu==1.4.0
+tensorflow==1.11.0
+tqdm==4.26.0
