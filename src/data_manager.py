@@ -37,7 +37,7 @@ class EmojifierLoader(object):
 
         self._i = (self._i + batch_size) % self._n
 
-        logger.debug('current batch from {} to {}'.format(self._i, self._i+batch_size))
+        # logger.debug('current batch from {} to {}'.format(self._i, self._i+batch_size))
 
         return x, y
 
