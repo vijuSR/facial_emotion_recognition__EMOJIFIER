@@ -32,6 +32,13 @@ There are 4 steps **from nothing** (not even a single image) **to getting the re
     1. run `python3 src/face_capture.py emotion-name num-of-images-to-capture`   
     -- example: `python3 src/face_capture.py cry 200`
     > This will open the cam and all you need to do is give the **cry** emotion from your face.
+    - **NOTE: You must change [this dict](https://github.com/vijuSR/facial_emotion_recognition__EMOJIFIER/blob/4e3c9c3c2d92208bd2932a8e105f4b6c095f5821/src/dataset_creator.py#L143) if you need another emotion-classes other than what is already defined there, which is the emotion-class map. Only (and all) emotion classes mentioned in this dict must be used as your emotion-classes while capturing images in the step 1. The already defined dict is: `emoji_dict = {
+        'smile': 0,
+        'kiss': 1,
+        'tease': 2,
+        'angry': 3,
+        'glass': 4
+    }` [Here in code!](https://github.com/vijuSR/facial_emotion_recognition__EMOJIFIER/blob/4e3c9c3c2d92208bd2932a8e105f4b6c095f5821/src/dataset_creator.py#L143)**
     - Do this step for all the different emotions in different lighting conditions.
     - I used 300 images for each emotions captured in 3 different light condition (100  each).
     - You can see your images inside the **'images'** folder which will contain different folder for different emotion images.
