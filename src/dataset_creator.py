@@ -2,6 +2,7 @@ import logging
 import pickle
 import os
 import sys
+import json
 import cv2
 import numpy as np
 import glob
@@ -9,6 +10,7 @@ import tqdm
 
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 import src
+from src.__init__ import *
 
 
 def image_reader(image_path_list):
@@ -32,69 +34,56 @@ def image_reader(image_path_list):
     return image
 
 
-def image_label_generator():
+def image_label_generator(emotion_map):
     labels = []
     
     _i = 0
 
-    for k, v in tqdm.tqdm(emoji_dict.items()):
+    image_lists = []
+    for k, v in tqdm.tqdm(emotion_map.items()):
 
         path = os.path.join(FACE_IMAGES_PATH, k)
-
-        if _i == 0:
-            image_list = glob.glob(path+'/*.png')
-            logger.debug('length images list: {}'.format(len(image_list)))
-            images = image_reader(image_list)
-            _i += 1
-        else:
-            image_list = glob.glob(path+'/*.png')
-            images = np.concatenate(
-                (
-                    images, 
-                    image_reader(image_list)
-                ), 
-                axis=0
-            )
-            
+        logger.debug('reading images at path: {}'.format(path))
+        image_list = glob.glob(path+'/*.png')
+        logger.debug('length images list: {}'.format(len(image_list)))
+        image_lists.append(image_list)
         labels.extend([v]*len(image_list))
         
+    images = np.vstack((image_reader(image_list) for image_list in image_lists))
+
     return images, labels
 
 
 def train_test_splitter(images, labels):
-    data = [(image, label) for image, label in zip(images, labels)]
+    dataset = [(image, label) for image, label in zip(images, labels)]
 
-    logger.debug('length data: {}'.format(len(data)))
+    dataset_size = len(dataset)
+    trainset_size = int(.8 * dataset_size)
+    testset_size = dataset_size - trainset_size
+    logger.debug('Dataset size: {}'.format(dataset_size))
     
-    np.random.shuffle(data)
+    np.random.shuffle(dataset)
     
-    # PAY ATTENTION HERE: CHOOSE THIS NUMBER TO SPLIT YOUR DATA SET, 
-    # YOU CAN ALSO ADD DEV-SET :)
-    train, test = data[:1200], data[1200:]
+    # PAY ATTENTION HERE: YOU CAN ALSO ADD DEV-SET :)
+    trainset, testset = dataset[:trainset_size], dataset[trainset_size:]
     
-    logger.debug('length-train: {}, length-test: {}'.format(
-        len(train), len(test)
+    logger.debug('Trainset size: {}, Testset size: {}'.format(
+        len(trainset), len(testset)
     ))
     
-    train_image, train_label = train[0][0], [train[0][1]]
-    test_image, test_label = test[0][0], [test[0][1]]
-        
-    train_image = np.expand_dims(train_image, axis=0)
-    test_image = np.expand_dims(test_image, axis=0)
+    logger.debug('concatinating the train images on axis 0')
+    train_image = np.vstack((tr[0] for tr in tqdm.tqdm(trainset[:])))
+    logger.debug('concatinating the train labels on axis 0')
+    train_label = [tr[1] for tr in tqdm.tqdm(trainset[:])]
+
+    logger.info('concatinating the test images on axis 0')
+    test_image = np.vstack((te[0] for te in tqdm.tqdm(testset[:])))
+    logger.debug('concatinating the test labels on axis 0')
+    test_label = [te[1] for te in tqdm.tqdm(testset[:])]
     
     logger.debug('train-images-shape: {}, test-images-shape: {}'.format(
         train_image.shape, test_image.shape
     ))
-    
-    logger.info('concatinating the train images on axis 0')
-    for tr in tqdm.tqdm(train[1:]):
-        train_image = np.concatenate((train_image, np.expand_dims(tr[0], axis=0)), axis=0)
-        train_label.append(tr[1])
-
-    logger.info('concatinating the test images on axis 0')
-    for te in tqdm.tqdm(test[1:]):
-        test_image = np.concatenate((test_image, np.expand_dims(te[0], axis=0)), axis=0)
-        test_label.append(te[1])
         
     return (train_image, train_label), (test_image, test_label)
 
@@ -120,11 +109,11 @@ def create_dataset(images, labels):
     
     with open(os.path.join(DATASET_SAVE_PATH, 'train_batch_0'), 'wb') as file:
         pickle.dump(train_dict, file)
-        logger.info('dataset: train-dict pickled and saved !')
+        logger.info('dataset: trainset-dict pickled and saved at {}'.format(DATASET_SAVE_PATH))
         
     with open(os.path.join(DATASET_SAVE_PATH, 'test_batch_0'), 'wb') as file:
         pickle.dump(test_dict, file)
-        logger.info('dataset: test-dict pickled and saved !')
+        logger.info('dataset: testset-dict pickled and saved at {}'.format(DATASET_SAVE_PATH))
         
     logger.info('dataset created :)')
 
