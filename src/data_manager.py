@@ -2,10 +2,12 @@ import logging
 import pickle
 import os
 import sys
+import json
 import numpy as np
 
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 import src
+from src.__init__ import *
 
 DATASET_SAVE_PATH = os.path.join(os.path.dirname(__file__), os.pardir, 'dataset')
 logger = logging.getLogger('emojifier.data_manager')
@@ -27,7 +29,7 @@ class EmojifierLoader(object):
 
         self.images = images.reshape(-1, 48, 48, 1).astype(float) / 255
 
-        self.labels = one_hot(np.hstack([d['labels'] for d in data]), 5)
+        self.labels = one_hot(np.hstack([d['labels'] for d in data]), len(EMOTION_MAP))
 
         return self
 
@@ -36,8 +38,6 @@ class EmojifierLoader(object):
         y = self.labels[self._i:self._i+batch_size]
 
         self._i = (self._i + batch_size) % self._n
-
-        # logger.debug('current batch from {} to {}'.format(self._i, self._i+batch_size))
 
         return x, y
 
