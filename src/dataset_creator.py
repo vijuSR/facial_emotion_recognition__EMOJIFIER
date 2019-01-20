@@ -118,6 +118,20 @@ def create_dataset(images, labels):
     logger.info('dataset created :)')
 
 
+def condition_satisfied(emotion_map):
+    for emotion_class in emotion_map.keys():
+        path = os.path.join(FACE_IMAGES_PATH, emotion_class)
+
+        if not os.path.exists(path):
+            logger.error('Please capture images for "{}" emotion-class as well'.format(
+                emotion_class
+            ))
+            logger.error('FAIL.')
+            return False
+
+    return True
+
+
 if __name__ == '__main__':
 
     logger = logging.getLogger('emojifier.dataset_creator')
@@ -126,16 +140,7 @@ if __name__ == '__main__':
 
     if not os.path.exists(DATASET_SAVE_PATH):
         os.makedirs(DATASET_SAVE_PATH)
-    
-    # CHANGE THIS DICT AND THE "image_label_generator" function
-    # if you have different class of emotions
-    emoji_dict = {
-        'smile': 0,
-        'kiss': 1,
-        'tease': 2,
-        'angry': 3,
-        'glass': 4
-    }
-    
-    _images, _labels = image_label_generator()
-    create_dataset(_images, _labels)
+
+    if condition_satisfied(emoji_dict):
+        _images, _labels = image_label_generator(emoji_dict)
+        create_dataset(_images, _labels)
