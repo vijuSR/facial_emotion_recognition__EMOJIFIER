@@ -3,15 +3,17 @@ import sys
 import cv2
 import time
 import logging
+import json
 import tensorflow as tf
 import numpy as np
-import matplotlib.pyplot as plt
 import glob
 import tqdm
 
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 import src
-from src.model import model
+from src.trainer import model
+from src.__init__ import *
+
 
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
@@ -32,9 +34,10 @@ def inference(sess, gray_img_input):
     y_c = softmax(y_c)
     p = np.argmax(y_c, axis=1)
     score = np.max(y_c)
-    logger.debug('''softmax-out: {}, 
-        predicted-index: {}, 
-        predicted-emoji: {}, 
+    logger.debug('''
+        softmax-out: {},
+        predicted-index: {},
+        predicted-emotion: {},
         confidence: {}'''.format(y_c, p[0], index_emo[p[0]], score))
     return p[0], score
         
@@ -113,22 +116,19 @@ if __name__ == '__main__':
     CHECKPOINT_SAVE_PATH = os.path.join(os.path.dirname(__file__), os.pardir, 'model_checkpoints')
     EMOJI_FILE_PATH = os.path.join(os.path.dirname(__file__), os.pardir, 'emoji')
     tf.reset_default_graph()
-    
-    emo_index = {'smile': 0,'kiss': 1,'tease': 2,'angry': 3,'glass': 4}
-    index_emo = {v:k for k,v in emo_index.items()}
+
+    index_emo = {v:k for k,v in EMOTION_MAP.items()}
     
     emoji_to_pic = {
     'smile': None,'kiss': None,'tease': None,'angry': None,'glass': None
     }
 
-    # ATTENTION: CHANGE THE '\\' A/C TO YOUR OS
-    files = glob.glob(EMOJI_FILE_PATH + '\\*.png')
+    files = glob.glob(EMOJI_FILE_PATH + '/*.png')
 
     logger.info('loading the emoji png files in memory ...')
     for file in tqdm.tqdm(files):
         logger.debug('file path: {}'.format(file))
-        # ATTENTION: CHANGE THE '\\' A/C TO YOUR OS
-        emoji_to_pic[file.split('\\')[-1].split('.')[0]] = cv2.imread(file, -1)
+        emoji_to_pic[file.split('/')[-1].split('.')[0]] = cv2.imread(file, -1)
 
     X = tf.placeholder(
         tf.float32, shape=[None, 48, 48, 1]
@@ -144,4 +144,5 @@ if __name__ == '__main__':
         saver.restore(sess, os.path.join(CHECKPOINT_SAVE_PATH, 'model.ckpt'))
 
         logger.info('Opening the camera for getting the video feed ...')
+        logger.info('PRESS "q" AT ANY TIME TO EXIT!')
         from_cam(sess)
