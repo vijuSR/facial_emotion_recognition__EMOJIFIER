@@ -3,9 +3,9 @@ import sys
 import cv2
 import time
 import logging
+import json
 import tensorflow as tf
 import numpy as np
-import matplotlib.pyplot as plt
 import glob
 import tqdm
 
@@ -13,9 +13,12 @@ import tqdm
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
 import src
 from src.data_manager import EmojifierDataManager
+from src.__init__ import *
 
 config = tf.ConfigProto()
 config.gpu_options.allow_growth = True
+
+logger = logging.getLogger('emojifier.model')
 
 
 def weight_variable(shape):
@@ -79,26 +82,36 @@ def model(x, keep_prob):
     full1 = tf.nn.relu(full_layer(conv2_drop, F1))
     full1_drop = tf.nn.dropout(full1, keep_prob=keep_prob)
     
-    y_conv = full_layer(full1_drop, 5)
+    y_conv = full_layer(full1_drop, len(EMOTION_MAP))
 
     return y_conv
 
 
 def test(emoji_data, sess):
-    x = emoji_data.test.images.reshape(9, 33, 48, 48, 1)
-    y = emoji_data.test.labels.reshape(9, 33, 5)
+    logger.info('CALCULATING TESTSET ACCURACY ...')
+    L = len(emoji_data.test.labels)
 
-    acc = np.mean([
-        sess.run(accuracy, feed_dict={X:x[i], Y:y[i], keep_prob:1.0}) \
-        for i in range(9)
-    ])
+    x = emoji_data.test.images
+    y = emoji_data.test.labels
+
+    accs = []
+
+    for i in tqdm.tqdm(range(0, L, 30)):
+        if i+30 <= L:
+            x_i = x[i:i+30].reshape(30, 48, 48, 1)
+            y_i = y[i:i+30].reshape(30, len(EMOTION_MAP))
+        else:
+            x_i = x[i:].reshape(L-i, 48, 48, 1)
+            y_i = y[i:].reshape(L-i, len(EMOTION_MAP))
+
+        accs.append(sess.run(accuracy, feed_dict={X:x_i, Y:y_i, keep_prob:1.0}))
+        
+    acc = np.mean(accs)
     
     logger.critical('test-accuracy: {:.4}%'.format(acc*100))
 
 
 if __name__ == '__main__':
-
-    logger = logging.getLogger('emojifier.model')
 
     CHECKPOINT_SAVE_PATH = os.path.join(os.path.dirname(__file__), os.pardir, 'model_checkpoints')
 
@@ -106,13 +119,13 @@ if __name__ == '__main__':
         os.makedirs(CHECKPOINT_SAVE_PATH)
 
     BATCH_SIZE = 30
-    STEPS = 2000
+    STEPS = 200
 
     X = tf.placeholder(
         tf.float32, shape=[None, 48, 48, 1]
     )
     
-    Y = tf.placeholder(tf.float32, shape=[None, 5])
+    Y = tf.placeholder(tf.float32, shape=[None, len(EMOTION_MAP)])
     
     keep_prob = tf.placeholder(tf.float32)
 
@@ -155,7 +168,7 @@ if __name__ == '__main__':
         
         sess.run(tf.global_variables_initializer())
 
-        for i in range(STEPS):
+        for i in tqdm.tqdm(range(STEPS)):
             x_data, y_data = emoset.train.next_batch(BATCH_SIZE)
 
             acc, loss, _ = sess.run(
@@ -164,8 +177,8 @@ if __name__ == '__main__':
             )
 
             if i % 20 == 0:
-                logger.info('step: {}, accuracy: {:.4}%, loss: {:.4}'.format(
-                    i, acc*100, loss
+                logger.info('accuracy: {:.4}%, loss: {:.4}'.format(
+                    acc*100, loss
                 ))
 
         test(emoset, sess)
