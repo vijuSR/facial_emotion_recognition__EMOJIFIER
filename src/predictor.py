@@ -84,9 +84,9 @@ def from_cam(sess):
                 frame[y:y+h, x:x+w, 1] = frame[y:y+h, x:x+w, 1] * (1-alpha) + alpha * img2[:,:,1]
                 frame[y:y+h, x:x+w, 2] = frame[y:y+h, x:x+w, 2] * (1-alpha) + alpha * img2[:,:,2]
 
-                cv2.putText(frame,f'Confidence: {confidence}', 
-                            bottomLeftCornerOfText, 
-                            font, 
+                cv2.putText(frame,f'Confidence: {round(confidence, 2)}',
+                            bottomLeftCornerOfText,
+                            font,
                             fontScale,
                             fontColor,
                             lineType)
