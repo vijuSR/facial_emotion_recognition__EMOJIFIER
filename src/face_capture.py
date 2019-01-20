@@ -1,17 +1,20 @@
-# Usage: face_capture.py emotion-name number-of-images-to-capture
-# argv.#1 -- emotion-name that you want these set of images to be labelled as.
-# argv.#2 -- number of images with the named emotion you want to capture.
+# Usage: face_capture.py -e emotion-name -n number-of-images
+# #1 emotion-name -- emotion-class-name that you want these set of
+# images to be labelled as.
+# #2 number-of-images -- number of images to capture with the given
+# emotion-class.
 
-# It generates the face crops for 
-# creating the dataset. It captures the 
-# frame from the video-feed from your cam
-# and detects the faces in it and saves
-# cropped face as a png file.
+# It generates the face crops for creating the dataset.
+# It captures the frame from the video-feed from your cam
+# and detects the faces in it and saves cropped face as a
+# png file.
 
 import time
 import sys
 import os
+import json
 import logging
+import argparse
 import numpy as np
 import cv2
 
