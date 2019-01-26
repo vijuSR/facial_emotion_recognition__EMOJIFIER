@@ -12,14 +12,14 @@ Recognizes the facial emotion and overlays emoji, equivalent to the emotion, on 
 
 1. ### Setup the Virtual Environment (Recommended):
     - Create the virtual environment
-        - `python3 -m venv --system-site-packages /path/to/venv`  
+        - `python3 -m venv </path/to/venv>`  
     - Activate your virtual-environment
-        - Linux: `source /path/to/venv/bin/activate`
-        - Windows: `cd /path/to/venv` then `.\Scripts\activate`  
+        - Linux: `source </path/to/venv>/bin/activate`
+        - Windows: `cd </path/to/venv>` then `.\Scripts\activate`  
     - Install the requirements
-        - `cd root-dir-of-project`
+        - `cd <root-dir-of-project>`
         - `pip install -I -r requirements.txt
-        > #### Install any missing requirement with `pip install package-name`  
+        > #### Install any missing requirement with `pip install <package-name>`  
         #### That's all for the setup ! :smiley: 
 
 ## Making it work for you:  
@@ -27,15 +27,15 @@ Recognizes the facial emotion and overlays emoji, equivalent to the emotion, on 
 There are 4 steps **from nothing** (not even a single image) **to getting the result as shown above**.  
 > #### And you don't need anything extra than this repo.  
 - **STEP 0** - define your EMOTION-MAP :smile: :heart: :clap:
-   1. `cd to-repo-root-dir`
+   1. `cd <to-repo-root-dir>`
    1. Open the 'emotion_map.json'
    1. Change this mapping as you desire. You need to write the emotion-name. Don't worry for the numeric-value assigned, only requirement is they should be unique.
    1. There must be a **.png** emoji image file in the '/emoji' folder for every emotion-class in the emotion_map.json.
 
 - **STEP 1** - generating the facial images 
-   1. `cd /to/repo/root/dir`  
-   1. run `python3 src/face_capture.py --emotion_name <emotion-name> --number-of-images <number>`   
-   -- example: `python3 src/face_capture.py --emotion_name smile --number-of-images 200`
+   1. `cd </to/repo/root/dir>`  
+   1. run `python3 src/face_capture.py --emotion_name <emotion-name> --number_of_images <number>`   
+   -- example: `python3 src/face_capture.py --emotion_name smile --number_of_images 200`
    > This will open the cam and all you need to do is give the **smile** emotion from your face.
    - **NOTE: You must change /emotion_map.json if you want another set emotions than what is already defined**
    - Do this step for all the different emotions in different lighting conditions.
