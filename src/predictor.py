@@ -43,13 +43,10 @@ def inference(sess, gray_img_input):
         
 
 def from_cam(sess):
-    cap = cv2.VideoCapture(0)
+    
+    face_cascade = cv2.CascadeClassifier(config_parser['OPEN_CV']['cascade_classifier_path'])
 
-    try:
-        face_cascade = cv2.CascadeClassifier(config_parser['OPEN_CV']['cascade_classifier_path'])
-    except:
-        logger.error('Mention correct path in "config.ini" file. For example see already present path there.')
-        return
+    cap = cv2.VideoCapture(0)
 
     font               = cv2.FONT_HERSHEY_SIMPLEX
     fontScale          = 1
