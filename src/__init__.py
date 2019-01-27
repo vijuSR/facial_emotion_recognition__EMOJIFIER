@@ -1,7 +1,16 @@
 import os
 import logging
 import json
+from configparser import ConfigParser
 
+
+CONFIG_FILE = os.path.join(
+    os.path.dirname(__file__),
+    os.pardir,
+    'config.ini'
+)
+
+config_parser.read(CONFIG_FILE)
 
 logging.basicConfig(
     level=logging.DEBUG,
@@ -11,8 +20,7 @@ logging.basicConfig(
 
 logging.info('Loggers ready !')
 
-# CHANGE THIS DICT AND THE "image_label_generator" function
-# if you have different class of emotions
+# CHANGE THIS DICT if you have different class of emotions
 EMOTION_MAP_PATH = os.path.join(
     os.path.dirname(__file__), 
     os.pardir, 

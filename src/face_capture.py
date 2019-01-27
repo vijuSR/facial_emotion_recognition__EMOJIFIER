@@ -89,7 +89,11 @@ if __name__ == '__main__':
 
     cap = cv2.VideoCapture(0)
 
-    FACE_CASCADE = cv2.CascadeClassifier('G:/VENVIRONMENT/computer_vision/Lib/site-packages/cv2/data/haarcascade_frontalface_default.xml')
+    try:
+        FACE_CASCADE = cv2.CascadeClassifier(config_parser['OPEN_CV']['cascade_classifier_path'])
+    except:
+        logger.error('Mention correct path in "config.ini" file. For example see already present path there.')
+        return
 
     PATH = os.path.join(os.path.dirname(__file__), os.pardir, 'images', EMOTION_CLASS)
 
