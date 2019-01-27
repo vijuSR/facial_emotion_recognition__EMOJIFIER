@@ -18,7 +18,7 @@ Recognizes the facial emotion and overlays emoji, equivalent to the emotion, on 
         - Windows: `cd </path/to/venv>` then `.\Scripts\activate`  
     - Install the requirements
         - `cd <root-dir-of-project>`
-        - `pip install -I -r requirements.txt
+        - `pip install --upgrade -I -r requirements.txt`
         > #### Install any missing requirement with `pip install <package-name>`  
         #### That's all for the setup ! :smiley: 
 
@@ -29,23 +29,23 @@ There are 4 steps **from nothing** (not even a single image) **to getting the re
 - **STEP 0** - define your EMOTION-MAP :smile: :heart: :clap:
    1. `cd <to-repo-root-dir>`
    1. Open the 'emotion_map.json'
-   1. Change this mapping as you desire. You need to write the emotion-name. Don't worry for the numeric-value assigned, only requirement is they should be unique.
-   1. There must be a **.png** emoji image file in the '/emoji' folder for every emotion-class in the emotion_map.json.
+   1. Change this mapping as you desire. You need to write the "emotion-name". Don't worry for the numeric-value assigned, only requirement is they should be unique.
+   1. There must be a **.png** emoji image file in the '/emoji' folder for every "emotion-name" mentioned in the emotion_map.json.
+   1. Open the 'config.ini' file and change the path to "haarcascade_frontalface_default.xml" file path on **your system**. For example on my system it's: > "G:/VENVIRONMENT/computer_vision/Lib/site-packages/cv2/data/haarcascade_frontalface_default.xml" where > "G:/VENVIRONMENT/computer_vision" is my virtual environment path.
 
 - **STEP 1** - generating the facial images 
    1. `cd </to/repo/root/dir>`  
    1. run `python3 src/face_capture.py --emotion_name <emotion-name> --number_of_images <number>`   
    -- example: `python3 src/face_capture.py --emotion_name smile --number_of_images 200`
    > This will open the cam and all you need to do is give the **smile** emotion from your face.
-   - **NOTE: You must change /emotion_map.json if you want another set emotions than what is already defined**
+   - **NOTE: You must change /emotion_map.json if you want another set emotions than what is already defined.**
    - Do this step for all the different emotions in different lighting conditions.
    - For the above result, I used 300 images for each emotions captured in 3 different light condition (100  each).
    - You can see your images inside the **'images'** folder which will contain different folder for different emotion images.
     
 - **STEP 2** - creating the dataset out of it  
    1. run `python3 src/dataset_creator.py`
-   - This will **create the ready-to-use dataset** as a python pickled file and save it in the dataset folder.
-   > Edit the emoji-dict inside the code if your 'emotion-list' is not the same as defined there.  
+   - This will **create the ready-to-use dataset** as a python pickled file and will save it in the dataset folder.
     
 - **STEP 3** - training the model on the dataset and saving it  
     1. run `python3 src/trainer.py`
