@@ -141,6 +141,6 @@ if __name__ == '__main__':
     if not os.path.exists(DATASET_SAVE_PATH):
         os.makedirs(DATASET_SAVE_PATH)
 
-    if condition_satisfied(emoji_dict):
-        _images, _labels = image_label_generator(emoji_dict)
+    if condition_satisfied(EMOTION_MAP):
+        _images, _labels = image_label_generator(EMOTION_MAP)
         create_dataset(_images, _labels)
