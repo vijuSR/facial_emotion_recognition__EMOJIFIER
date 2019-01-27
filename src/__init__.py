@@ -10,6 +10,8 @@ CONFIG_FILE = os.path.join(
     'config.ini'
 )
 
+config_parser = ConfigParser()
+
 config_parser.read(CONFIG_FILE)
 
 logging.basicConfig(
