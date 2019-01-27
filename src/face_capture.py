@@ -26,6 +26,8 @@ from src.__init__ import *
 
 def generate_faces(saving_path, num):
 
+    face_cascade = cv2.CascadeClassifier(config_parser['OPEN_CV']['cascade_classifier_path'])
+
     if not os.path.exists(saving_path):
         os.makedirs(saving_path)
 
@@ -39,7 +41,7 @@ def generate_faces(saving_path, num):
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
 
         # detect the faces, bounding boxes
-        faces = FACE_CASCADE.detectMultiScale(gray, 1.3, 5)
+        faces = face_cascade.detectMultiScale(gray, 1.3, 5)
 
         # draw the rectangle (bounding-boxes)
         for (x,y,w,h) in faces:
@@ -88,8 +90,6 @@ if __name__ == '__main__':
     N = args.number_of_images
 
     cap = cv2.VideoCapture(0)
-
-    FACE_CASCADE = cv2.CascadeClassifier('G:/VENVIRONMENT/computer_vision/Lib/site-packages/cv2/data/haarcascade_frontalface_default.xml')
 
     PATH = os.path.join(os.path.dirname(__file__), os.pardir, 'images', EMOTION_CLASS)
 
