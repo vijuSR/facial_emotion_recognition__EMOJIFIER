@@ -63,7 +63,7 @@ def from_cam(sess):
 
         # draw the rectangle (bounding-boxes)
         for (x,y,w,h) in faces:
-            cv2.rectangle(frame, (x,y), (x+w, y+h), (255,0,0), 2)
+            cv2.rectangle(gray, (x,y), (x+w, y+h), (255,0,0), 2)
             bottomLeftCornerOfText = (x+10,y+h+10)
 
             face_img_gray = gray[y:y+h, x:x+w]
@@ -72,7 +72,7 @@ def from_cam(sess):
             p, confidence = inference(sess, face_img_gray)
             logger.critical('model inference time: {}'.format(time.time() - s))
             
-            if confidence > 0.45:
+            if confidence > 0.5:
             
                 img2 = emoji_to_pic[index_emo[p]]
                 img2 = cv2.resize(img2, (w, h))
