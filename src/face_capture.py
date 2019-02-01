@@ -20,7 +20,6 @@ import cv2
 
 
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
-import src
 from src.__init__ import *
 
 

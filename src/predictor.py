@@ -10,7 +10,6 @@ import glob
 import tqdm
 
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
-import src
 from src.trainer import model
 from src.__init__ import *
 
@@ -45,7 +44,6 @@ def inference(sess, gray_img_input):
 def from_cam(sess):
     
     face_cascade = cv2.CascadeClassifier(config_parser['OPEN_CV']['cascade_classifier_path'])
-
     cap = cv2.VideoCapture(0)
 
     font               = cv2.FONT_HERSHEY_SIMPLEX
@@ -65,7 +63,7 @@ def from_cam(sess):
 
         # draw the rectangle (bounding-boxes)
         for (x,y,w,h) in faces:
-            cv2.rectangle(frame, (x,y), (x+w, y+h), (255,0,0), 2)
+            cv2.rectangle(gray, (x,y), (x+w, y+h), (255,0,0), 2)
             bottomLeftCornerOfText = (x+10,y+h+10)
 
             face_img_gray = gray[y:y+h, x:x+w]
@@ -74,7 +72,7 @@ def from_cam(sess):
             p, confidence = inference(sess, face_img_gray)
             logger.critical('model inference time: {}'.format(time.time() - s))
             
-            if confidence > 0.45:
+            if confidence > 0.5:
             
                 img2 = emoji_to_pic[index_emo[p]]
                 img2 = cv2.resize(img2, (w, h))
@@ -118,18 +116,27 @@ if __name__ == '__main__':
     EMOJI_FILE_PATH = os.path.join(os.path.dirname(__file__), os.pardir, 'emoji')
     tf.reset_default_graph()
 
+    # used to map the output from the prediction to the emotion class
     index_emo = {v:k for k,v in EMOTION_MAP.items()}
     
-    emoji_to_pic = {
-    'smile': None,'kiss': None,'tease': None,'angry': None,'glass': None
-    }
+    # dictionary of emoji name and the corresponding read image
+    emoji_to_pic = {k: None for k in EMOTION_MAP.keys()}
 
-    files = glob.glob(EMOJI_FILE_PATH + '/*.png')
+    emoji_png_files_path = os.path.join(EMOJI_FILE_PATH, '*.png')
+    files = glob.glob(emoji_png_files_path)
 
     logger.info('loading the emoji png files in memory ...')
+
+    import platform
+
+    if platform.system() == 'Windows':
+        split_string = '\\'
+    else:
+        split_string = '/'
+
     for file in tqdm.tqdm(files):
         logger.debug('file path: {}'.format(file))
-        emoji_to_pic[file.split('/')[-1].split('.')[0]] = cv2.imread(file, -1)
+        emoji_to_pic[file.split(split_string)[-1].split('.')[0]] = cv2.imread(file, -1)
 
     X = tf.placeholder(
         tf.float32, shape=[None, 48, 48, 1]

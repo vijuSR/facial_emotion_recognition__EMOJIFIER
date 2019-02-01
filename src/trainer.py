@@ -118,8 +118,10 @@ if __name__ == '__main__':
     if not os.path.exists(CHECKPOINT_SAVE_PATH):
         os.makedirs(CHECKPOINT_SAVE_PATH)
 
-    BATCH_SIZE = 30
-    STEPS = 200
+    BATCH_SIZE = config_parser.getInt('MODEL_HYPER_PARAMETERS', 'batch_size')
+    STEPS = config_parser.getInt('MODEL_HYPER_PARAMETERS', 'train_steps')
+    LEARNING_RATE = config_parser.getFloat('MODEL_HYPER_PARAMETERS', 'learning_rate')
+    KEEP_PROB = config_parser.getFloat('MODEL_HYPER_PARAMETERS', 'dropout_keep_prob')
 
     X = tf.placeholder(
         tf.float32, shape=[None, 48, 48, 1]
@@ -153,7 +155,7 @@ if __name__ == '__main__':
         )
     )
     
-    train = tf.train.AdamOptimizer(1e-4).minimize(cross_entropy)
+    train = tf.train.AdamOptimizer(LEARNING_RATE).minimize(cross_entropy)
 
     correct_predictions = tf.equal(
         tf.argmax(y_conv, 1), tf.argmax(Y, 1)
@@ -173,7 +175,7 @@ if __name__ == '__main__':
 
             acc, loss, _ = sess.run(
                 [accuracy, cross_entropy, train], 
-                feed_dict={X:x_data, Y:y_data, keep_prob: 0.7}
+                feed_dict={X:x_data, Y:y_data, keep_prob: KEEP_PROB}
             )
 
             if i % 20 == 0:

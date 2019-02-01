@@ -32,6 +32,7 @@ There are 4 steps **from nothing** (not even a single image) **to getting the re
    1. Change this mapping as you desire. You need to write the "emotion-name". Don't worry for the numeric-value assigned, only requirement is they should be unique.
    1. There must be a **.png** emoji image file in the '/emoji' folder for every "emotion-name" mentioned in the emotion_map.json.
    1. Open the 'config.ini' file and change the path to "haarcascade_frontalface_default.xml" file path on **your system**. For example on my system it's: > "G:/VENVIRONMENT/computer_vision/Lib/site-packages/cv2/data/haarcascade_frontalface_default.xml" where > "G:/VENVIRONMENT/computer_vision" is my virtual environment path.
+   1. 'config.ini' contains the hyperparameters of the model. These will depend on the model and the dataset size. The default one should work fine for current model and a dataset size of around 1.2k to 3k. **IT'S HIGHLY RECOMMENDED TO PLAY AROUND WITH THEM**.
 
 - **STEP 1** - generating the facial images 
    1. `cd </to/repo/root/dir>`  
