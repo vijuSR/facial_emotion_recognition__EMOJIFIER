@@ -44,7 +44,6 @@ def inference(sess, gray_img_input):
 def from_cam(sess):
     
     face_cascade = cv2.CascadeClassifier(config_parser['OPEN_CV']['cascade_classifier_path'])
-
     cap = cv2.VideoCapture(0)
 
     font               = cv2.FONT_HERSHEY_SIMPLEX
