@@ -118,10 +118,10 @@ if __name__ == '__main__':
     if not os.path.exists(CHECKPOINT_SAVE_PATH):
         os.makedirs(CHECKPOINT_SAVE_PATH)
 
-    BATCH_SIZE = config_parser.getInt('MODEL_HYPER_PARAMETERS', 'batch_size')
-    STEPS = config_parser.getInt('MODEL_HYPER_PARAMETERS', 'train_steps')
-    LEARNING_RATE = config_parser.getFloat('MODEL_HYPER_PARAMETERS', 'learning_rate')
-    KEEP_PROB = config_parser.getFloat('MODEL_HYPER_PARAMETERS', 'dropout_keep_prob')
+    BATCH_SIZE = config_parser.getint('MODEL_HYPER_PARAMETERS', 'batch_size')
+    STEPS = config_parser.getint('MODEL_HYPER_PARAMETERS', 'train_steps')
+    LEARNING_RATE = config_parser.getfloat('MODEL_HYPER_PARAMETERS', 'learning_rate')
+    KEEP_PROB = config_parser.getfloat('MODEL_HYPER_PARAMETERS', 'dropout_keep_prob')
 
     X = tf.placeholder(
         tf.float32, shape=[None, 48, 48, 1]
