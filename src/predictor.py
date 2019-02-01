@@ -10,7 +10,6 @@ import glob
 import tqdm
 
 sys.path.append(os.path.join(os.path.dirname(__file__), os.pardir))
-import src
 from src.trainer import model
 from src.__init__ import *
 
