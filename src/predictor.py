@@ -116,18 +116,27 @@ if __name__ == '__main__':
     EMOJI_FILE_PATH = os.path.join(os.path.dirname(__file__), os.pardir, 'emoji')
     tf.reset_default_graph()
 
+    # used to map the output from the prediction to the emotion class
     index_emo = {v:k for k,v in EMOTION_MAP.items()}
     
-    emoji_to_pic = {
-    'smile': None,'kiss': None,'tease': None,'angry': None,'glass': None
-    }
+    # dictionary of emoji name and the corresponding read image
+    emoji_to_pic = {k: None for k in EMOTION_MAP.keys()}
 
-    files = glob.glob(EMOJI_FILE_PATH + '/*.png')
+    emoji_png_files_path = os.path.join(EMOJI_FILE_PATH, '*.png')
+    files = glob.glob(emoji_png_files_path)
 
     logger.info('loading the emoji png files in memory ...')
+
+    import platform
+
+    if platform.system() == 'Windows':
+        split_string = '\\'
+    else:
+        split_string = '/'
+
     for file in tqdm.tqdm(files):
         logger.debug('file path: {}'.format(file))
-        emoji_to_pic[file.split('/')[-1].split('.')[0]] = cv2.imread(file, -1)
+        emoji_to_pic[file.split(split_string)[-1].split('.')[0]] = cv2.imread(file, -1)
 
     X = tf.placeholder(
         tf.float32, shape=[None, 48, 48, 1]
